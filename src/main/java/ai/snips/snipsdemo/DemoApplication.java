@@ -23,6 +23,7 @@ public class DemoApplication extends Application {
         if (!isSnipsProcess()) {
             Log.i("SnipsDemoApp", "in the main process");
             // do some init here
+
         } else {
             Log.i("SnipsDemoApp", "in the snips process");
         }
