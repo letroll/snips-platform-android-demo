@@ -1,6 +1,5 @@
 package ai.snips.snipsdemo
 
-import ai.snips.platform.SnipsPlatformClient
 import android.app.Application
 import android.util.Log
 import java.io.BufferedReader
@@ -10,7 +9,9 @@ import java.io.IOException
 
 class DemoApplication : Application() {
 
-    private val client: SnipsPlatformClient? = null
+    companion object {
+        lateinit var INSTANCE: DemoApplication
+    }
 
     val isSnipsProcess: Boolean
         get() {
@@ -35,15 +36,10 @@ class DemoApplication : Application() {
         if (!isSnipsProcess) {
             Log.i("SnipsDemoApp", "in the main process")
             // do some init here
-            initClient()
         } else {
             Log.i("SnipsDemoApp", "in the snips process")
         }
 
-
-    }
-
-    private fun initClient() {
-
+        INSTANCE = this
     }
 }
