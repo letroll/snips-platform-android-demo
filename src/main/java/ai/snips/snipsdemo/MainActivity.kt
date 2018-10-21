@@ -1,6 +1,5 @@
 package ai.snips.snipsdemo
 
-import ai.snips.snipsdemo.ClientManager.startMegazordService
 import android.os.Bundle
 import android.text.Html
 import android.view.View
@@ -8,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_main.*
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         observeUIChange()
         setupUI()
-        loadSnips()
+        bindService(SnipsService.intent(this), presenter, 0)
     }
 
     private fun observeUIChange() {
@@ -64,20 +64,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
-        start.setOnClickListener {
-            loadSnips()
-        }
-    }
-
-    private fun loadSnips() {
         if (ensurePermissions(this)) {
-            start.isEnabled = false
-            start.setText(R.string.loading)
-            scrollView.visibility = View.GONE
-            loadingPanel.visibility = View.VISIBLE
-            startMegazordService(presenter)
+            start.setOnClickListener {
+            }
+            start.setOnLongClickListener {
+                true
+            }
         }
     }
 
-
+    fun unBound() {
+        if (presenter.unbound()) {
+            unbindService(presenter)
+        }
+    }
 }

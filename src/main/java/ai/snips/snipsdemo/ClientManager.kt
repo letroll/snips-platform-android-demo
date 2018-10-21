@@ -16,12 +16,13 @@ import java.util.*
 object ClientManager : LifecycleObserver {
 
     val AUDIO_ECHO_REQUEST = 0
-    private val TAG = "MainActivity"
+    private val TAG = "ClientManager"
     private val FREQUENCY = 16000
     private val CHANNEL = AudioFormat.CHANNEL_IN_MONO
     private val ENCODING = AudioFormat.ENCODING_PCM_16BIT
 
     private var client: SnipsPlatformClient? = null
+    private var snipsClientUiManager: SnipsClientUiManager? = null
     private var recorder: AudioRecord? = null
 
     @Volatile
@@ -47,7 +48,8 @@ object ClientManager : LifecycleObserver {
         client?.disconnect()
     }
 
-    fun startMegazordService(snipsClientUiManager: SnipsClientUiManager) {
+    fun startMegazordService(snipsClientUiManager: SnipsClientUiManager?) {
+        this.snipsClientUiManager = snipsClientUiManager
         if (client == null) {
             // a dir where the assistant models was unziped. it should contain the folders asr dialogue hotword and nlu
             val assistantDir = File(Environment.getExternalStorageDirectory()
@@ -64,11 +66,11 @@ object ClientManager : LifecycleObserver {
                     .build()
 
             client?.onPlatformReady = fun() {
-                snipsClientUiManager.onPlatformReady()
+                this.snipsClientUiManager?.onPlatformReady()
             }
 
             client?.onPlatformError = fun(_: SnipsPlatformClient.SnipsPlatformError) {
-                snipsClientUiManager.onPlatformError()
+                this.snipsClientUiManager?.onPlatformError()
             }
 
 
@@ -107,7 +109,7 @@ object ClientManager : LifecycleObserver {
             // This api is really for debugging purposes and you should not have features depending on its output
             // If you need us to expose more APIs please do ask !
             client?.onSnipsWatchListener = fun(s: String) {
-                snipsClientUiManager.onPlatformDebug(s)
+                this.snipsClientUiManager?.onPlatformDebug(s)
             }
 
             // We enabled steaming in the builder, so we need to provide the platform an audio stream. If you don't want

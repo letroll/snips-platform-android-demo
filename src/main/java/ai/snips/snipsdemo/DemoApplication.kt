@@ -1,6 +1,9 @@
 package ai.snips.snipsdemo
 
 import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.os.Build
 import android.util.Log
 import java.io.BufferedReader
 import java.io.File
@@ -11,6 +14,8 @@ class DemoApplication : Application() {
 
     companion object {
         lateinit var INSTANCE: DemoApplication
+        const val NOTIFICATION_CHANNEL_ID = "NOTIFICATION_CHANNEL_ID_SNIPS "
+        const val NOTIFICATION_CHANNEL_NAME = "NOTIFICATION_CHANNEL_SNIPS "
     }
 
     val isSnipsProcess: Boolean
@@ -41,5 +46,25 @@ class DemoApplication : Application() {
         }
 
         INSTANCE = this
+
+        createNotificationChannel()
+        startSnipsService()
     }
+
+    private fun startSnipsService() {
+        if (ensurePermissions(this)) {
+            SnipsService.start(this, PlateformState.NOT_READY.ordinal)
+        } else {
+            SnipsService.start(this, PlateformState.ERROR.ordinal)
+        }
+    }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationChannel = NotificationChannel(NOTIFICATION_CHANNEL_ID, NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT)
+            val notificationManager = getSystemService(NotificationManager::class.java)
+            notificationManager.createNotificationChannel(notificationChannel)
+        }
+    }
+
 }
