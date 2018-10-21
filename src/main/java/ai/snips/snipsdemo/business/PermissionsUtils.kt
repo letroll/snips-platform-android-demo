@@ -1,6 +1,6 @@
-package ai.snips.snipsdemo
+package ai.snips.snipsdemo.business
 
-import ai.snips.snipsdemo.ClientManager.AUDIO_ECHO_REQUEST
+import ai.snips.snipsdemo.business.ClientManager.AUDIO_ECHO_REQUEST
 import android.Manifest
 import android.app.Activity
 import android.content.Context

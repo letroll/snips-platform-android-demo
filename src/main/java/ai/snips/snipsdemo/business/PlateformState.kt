@@ -1,4 +1,4 @@
-package ai.snips.snipsdemo
+package ai.snips.snipsdemo.business
 
 enum class PlateformState {
     NOT_READY,

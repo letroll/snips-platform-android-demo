@@ -1,7 +1,8 @@
-package ai.snips.snipsdemo
+package ai.snips.snipsdemo.business
 
 import ai.snips.hermes.*
 import ai.snips.platform.SnipsPlatformClient
+import ai.snips.snipsdemo.DemoApplication
 import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
@@ -49,7 +50,7 @@ object ClientManager : LifecycleObserver {
     }
 
     fun startMegazordService(snipsClientUiManager: SnipsClientUiManager?) {
-        this.snipsClientUiManager = snipsClientUiManager
+        ClientManager.snipsClientUiManager = snipsClientUiManager
         if (client == null) {
             // a dir where the assistant models was unziped. it should contain the folders asr dialogue hotword and nlu
             val assistantDir = File(Environment.getExternalStorageDirectory()
@@ -66,11 +67,11 @@ object ClientManager : LifecycleObserver {
                     .build()
 
             client?.onPlatformReady = fun() {
-                this.snipsClientUiManager?.onPlatformReady()
+                ClientManager.snipsClientUiManager?.onPlatformReady()
             }
 
             client?.onPlatformError = fun(_: SnipsPlatformClient.SnipsPlatformError) {
-                this.snipsClientUiManager?.onPlatformError()
+                ClientManager.snipsClientUiManager?.onPlatformError()
             }
 
 
@@ -109,7 +110,7 @@ object ClientManager : LifecycleObserver {
             // This api is really for debugging purposes and you should not have features depending on its output
             // If you need us to expose more APIs please do ask !
             client?.onSnipsWatchListener = fun(s: String) {
-                this.snipsClientUiManager?.onPlatformDebug(s)
+                ClientManager.snipsClientUiManager?.onPlatformDebug(s)
             }
 
             // We enabled steaming in the builder, so we need to provide the platform an audio stream. If you don't want

@@ -1,5 +1,8 @@
 package ai.snips.snipsdemo
 
+import ai.snips.snipsdemo.business.PlateformState
+import ai.snips.snipsdemo.business.ensurePermissions
+import ai.snips.snipsdemo.service.SnipsService
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager

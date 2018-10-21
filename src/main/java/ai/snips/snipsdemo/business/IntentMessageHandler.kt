@@ -1,4 +1,4 @@
-package ai.snips.snipsdemo
+package ai.snips.snipsdemo.business
 
 import ai.snips.hermes.IntentMessage
 

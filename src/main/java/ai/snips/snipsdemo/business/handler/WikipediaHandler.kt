@@ -1,7 +1,7 @@
-package ai.snips.snipsdemo.handler
+package ai.snips.snipsdemo.business.handler
 
 import ai.snips.hermes.IntentMessage
-import ai.snips.snipsdemo.IntentMessageHandler
+import ai.snips.snipsdemo.business.IntentMessageHandler
 
 class WikipediaHandler : IntentMessageHandler {
     override fun canHandle(intentMessage: IntentMessage): Boolean {

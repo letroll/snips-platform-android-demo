@@ -1,5 +1,8 @@
-package ai.snips.snipsdemo
+package ai.snips.snipsdemo.presentation
 
+import ai.snips.snipsdemo.business.ClientManager
+import ai.snips.snipsdemo.service.SnipsService
+import ai.snips.snipsdemo.service.SnipsServiceBinder
 import android.content.ComponentName
 import android.content.ServiceConnection
 import android.os.IBinder
@@ -8,28 +11,11 @@ import androidx.lifecycle.ViewModel
 import java.util.*
 
 
-class MainPresenter : ViewModel(), SnipsClientUiManager, ServiceConnection {
+class MainPresenter : ViewModel(), ServiceConnection {
 
-    val plateFormState = MutableLiveData<PlateformState>()
-    val snipsPlatformClientStatus = MutableLiveData<String>()
-    var snipsService: SnipsService? = null
+    val serviceWorking = MutableLiveData<Boolean>()
+    lateinit var snipsService: SnipsService
     var serviceBound = false
-
-    override fun onCleared() {
-        super.onCleared()
-    }
-
-    override fun onPlatformReady() {
-        plateFormState.value = PlateformState.READY
-    }
-
-    override fun onPlatformError() {
-        plateFormState.value = PlateformState.ERROR
-    }
-
-    override fun onPlatformDebug(status: String) {
-        snipsPlatformClientStatus.value = status
-    }
 
     fun startSnipSession() {
         ClientManager.startSession()
@@ -44,6 +30,7 @@ class MainPresenter : ViewModel(), SnipsClientUiManager, ServiceConnection {
     //region service
     override fun onServiceDisconnected(name: ComponentName?) {
         serviceBound = false
+        serviceWorking.value = serviceBound
     }
 
     override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
@@ -51,6 +38,11 @@ class MainPresenter : ViewModel(), SnipsClientUiManager, ServiceConnection {
         service?.let {
             snipsService = (it as SnipsServiceBinder).getService()
         }
+        serviceWorking.value = serviceBound
+    }
+
+    fun isServiceUp(): Boolean {
+        return serviceBound
     }
 
     fun unbound(): Boolean {

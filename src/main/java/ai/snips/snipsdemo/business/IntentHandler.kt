@@ -1,7 +1,7 @@
-package ai.snips.snipsdemo
+package ai.snips.snipsdemo.business
 
 import ai.snips.hermes.IntentMessage
-import ai.snips.snipsdemo.handler.WikipediaHandler
+import ai.snips.snipsdemo.business.handler.WikipediaHandler
 import android.util.Log
 
 object IntentHandler {

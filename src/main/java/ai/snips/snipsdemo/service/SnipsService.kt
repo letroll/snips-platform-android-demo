@@ -1,6 +1,12 @@
-package ai.snips.snipsdemo
+package ai.snips.snipsdemo.service
 
 import ai.snips.snipsdemo.DemoApplication.Companion.NOTIFICATION_CHANNEL_ID
+import ai.snips.snipsdemo.R
+import ai.snips.snipsdemo.business.ClientManager
+import ai.snips.snipsdemo.business.PlateformState
+import ai.snips.snipsdemo.business.SnipsClientUiManager
+import ai.snips.snipsdemo.presentation.MainActivity
+import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
@@ -8,6 +14,7 @@ import android.content.Intent
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.MutableLiveData
 
 class SnipsService : Service(), SnipsClientUiManager {
 
@@ -29,9 +36,16 @@ class SnipsService : Service(), SnipsClientUiManager {
 
         fun intent(context: Context) = Intent(context, SnipsService::class.java)
 
-        var plateformState = PlateformState.NOT_READY
     }
 
+    lateinit var notification: Notification
+    var plateformState = PlateformState.NOT_READY
+    val snipsPlatformClientStatus = MutableLiveData<String>()
+    val plateFormState = MutableLiveData<PlateformState>()
+
+    override fun onDestroy() {
+        super.onDestroy()
+    }
 
     override fun onBind(intent: Intent): IBinder? {
         return SnipsServiceBinder(this)
@@ -39,11 +53,10 @@ class SnipsService : Service(), SnipsClientUiManager {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         plateformState = PlateformState.values()[intent?.extras?.getInt(STATE, 0) ?: 0]
-//            startMegazordService(this)
         val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
 
-        val notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+        notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText(plateformState.name)
                 .setSmallIcon(R.drawable.ic_mic_black_24dp)
@@ -69,15 +82,17 @@ class SnipsService : Service(), SnipsClientUiManager {
 
     //region snips ui callback
     override fun onPlatformReady() {
+        plateFormState.value = PlateformState.READY
         start(baseContext, PlateformState.READY.ordinal)
     }
 
     override fun onPlatformError() {
+        plateFormState.value = PlateformState.ERROR
         start(baseContext, PlateformState.ERROR.ordinal)
     }
 
     override fun onPlatformDebug(status: String) {
-
+        snipsPlatformClientStatus.value = status
     }
     //endregion
 }
